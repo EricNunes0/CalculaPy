@@ -3,6 +3,7 @@ import tkinter
 class MyWindow:
     def __init__(self, win):
         self.win = win
+        self.theme = 0
 
         self.conta = tkinter.Label(self.win, font = "Arial 14", fg = "#808080", justify = tkinter.RIGHT)
         self.conta.place(x = 10, y = 10, width = 300, height = 20)
@@ -10,6 +11,9 @@ class MyWindow:
         self.resultado = tkinter.Entry(self.win, font = "Arial 28", bg = "#f0f0f0", justify = tkinter.RIGHT, border = "0px solid")
         self.resultado.place(x = 10, y = 30, width = 300, height = 40)
         self.resultado.insert(0, 0)
+
+        self.btnTheme = tkinter.Button(self.win, cursor = "hand2", text = "☀", font = "Arial 12", bg = "#d0d0d0", border = "1px solid", command = lambda:self.changeTheme())
+        self.btnTheme.place(x = 10, y = 10, width = 25, height = 25)
 
         btnWidth = 71
         btnHeight = 71
@@ -22,6 +26,8 @@ class MyWindow:
         fontFamily = "Arial 14"
         btnBg = "#fff"
         btnBgGray = "#fafafa"
+        btnBgD = "#3a3a3a"
+        btnBgGrayD = "#404040"
 
         self.btnPercent = tkinter.Button(self.win, cursor = "hand2", text = "%", font = fontFamily, bg = btnBgGray, border = btnBorder, command = lambda:self.addOperator("÷ 100 ×"))
         self.btnPercent.place(x = btnPosX + (btnProX * 0), y = btnPosY + (btnProY * 0), width = btnWidth, height = btnHeight)
@@ -74,15 +80,24 @@ class MyWindow:
         self.btn0.place(x = btnPosX + (btnProX * 1), y = btnPosY + (btnProY * 5), width = btnWidth, height = btnHeight)
         self.btnComma = tkinter.Button(self.win, cursor = "hand2", text = ",", font = fontFamily, bg = btnBg, border = btnBorder, command = lambda:self.addNumberDigit("."))
         self.btnComma.place(x = btnPosX + (btnProX * 2), y = btnPosY + (btnProY * 5), width = btnWidth, height = btnHeight)
-        self.btnEqual = tkinter.Button(self.win, cursor = "hand2", text = "=", font = fontFamily, bg = "#1e5ac8", fg = "#fff", border = btnBorder, command = lambda:self.calculate())
+        self.btnEqual = tkinter.Button(self.win, cursor = "hand2", text = "=", font = fontFamily, bg = "#205aca", fg = "#fff", border = btnBorder, command = lambda:self.calculate())
         self.btnEqual.place(x = btnPosX + (btnProX * 3), y = btnPosY + (btnProY * 5), width = btnWidth, height = btnHeight)
 
         def on_enter(btn):
-            btn.widget["background"] = "#f5f5f5"
+            if self.theme == 0:
+                btn.widget["background"] = "#f5f5f5"
+            elif self.theme == 1:
+                btn.widget["background"] = "#353535"
         def on_leave(btn):
-            btn.widget["background"] = btnBg
+            if self.theme == 0:
+                btn.widget["background"] = btnBg
+            elif self.theme == 1:
+                btn.widget["background"] = btnBgD
         def on_leaveGray(btn):
-            btn.widget["background"] = btnBgGray
+            if self.theme == 0:
+                btn.widget["background"] = btnBgGray
+            if self.theme == 1:
+                btn.widget["background"] = btnBgGrayD
 
         self.btnPercent.bind("<Enter>", on_enter)
         self.btnPercent.bind("<Leave>", on_leaveGray)
@@ -219,6 +234,38 @@ class MyWindow:
         self.conta.config(text = "")
         self.resultado.delete(0, "end")
         self.resultado.insert(0, r)
+    
+    def changeTheme(self):
+        if self.theme == 0:
+            self.theme = 1
+            self.win.configure(background = "#303030")
+            self.btnTheme.configure(text = "🌙")
+            self.conta.configure(background = "#303030", fg = "#b0b0b0")
+            self.resultado.configure(background = "#303030", fg = "#fff")
+            ic = self.win.winfo_children()
+            for b in range(0, len(ic)):
+                btnCheck = str(ic[b])
+                if btnCheck.count("button") > 0:
+                    bg = ic[b].cget("bg")
+                    if bg == "#fff":
+                        ic[b].configure(background = "#3a3a3a", fg = "#fff")
+                    elif bg == "#fafafa":
+                        ic[b].configure(background = "#404040", fg = "#fff")
+        elif self.theme == 1:
+            self.theme = 0
+            self.win.configure(background = "#f0f0f0")
+            self.btnTheme.configure(text = "☀")
+            self.conta.configure(background = "#f0f0f0", fg = "#808080")
+            self.resultado.configure(background = "#f0f0f0", fg = "#000")
+            ic = self.win.winfo_children()
+            for b in range(0, len(ic)):
+                btnCheck = str(ic[b])
+                if btnCheck.count("button") > 0:
+                    bg = ic[b].cget("bg")
+                    if bg == "#3a3a3a":
+                        ic[b].configure(background = "#fff", fg = "#000")
+                    elif bg == "#404040":
+                        ic[b].configure(background = "#fafafa", fg = "#000")
 
 calcTk = tkinter.Tk()
 MyWindow(calcTk)
